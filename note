@@ -1,0 +1,1237 @@
+///////////////////////////////////////////
+//                                       //
+//                                       //
+//   		python		         //
+//                                       //
+//                                       //
+///////////////////////////////////////////
+"argparse" aa.py
+
+#!/bin/python2.7
+import argparse
+parser=argparse.ArgumentParser()
+parser.add_argument("echo",help="echo the string")
+args=parser.parse_args()
+print args.echo
+>>./aa.py aaaa
+>>aaaa
+
+"/home/lumeng/aa.py"
+#!/bin/python2.7
+import os
+script_dir = os.path.realpath(__file__)
+print script_dir
+>>./aa.py
+>>/home/lumeng/aa.py
+
+"/home/lumeng/aa.py"
+#!/bin/python2.7
+import os
+script_dir = os.path.dirname(__file__)
+print script_dir
+>>./aa.py
+>>.
+>>python2.7 /home/lumeng/aa.py
+>>/home/lumeng
+
+>>>>>>>optparse
+
+from optparse import OptionParser
+parser = OptionParser()
+parser.add_option("-f", "--file", dest="filename",
+                  help="write report to FILE", metavar="FILE")
+parser.add_option("-q", "--quiet",
+                  action="store_false", dest="verbose", default=True,
+                  help="don't print status messages to stdout")
+
+(options, args) = parser.parse_args() #固定格式
+
+print options.filename
+print args
+
+
+****
+
+import sys
+
+inputFile = sys.argv[0]
+print inputFile
+*****
+
+$ python temp.py r.in
+$temp.py
+
+///////////////////////////////////////////
+//                                       //
+//                                       //
+//   note on lsf, and bsub of lsf        //
+//                                       //
+//                                       //
+///////////////////////////////////////////
+
+Platform Load Sharing Facility (or simply LSF) is a workload management platform, job scheduler, for distributed HPC environments, submit_gridpack_generation.sh submits gridpack creation as an LSF job.
+
+***introduction and guide of LSF: http://www.vub.ac.be/BFUCC/LSF/
+*** LSF user guide: http://ls11-www.cs.tu-dortmund.de/people/hermes/manuals/LSF/users.pdf
+*** LSF command: http://www.ccmst.gatech.edu/lsf_user_qrefcard_60.pdf
+
+///////////////////////////////////////////
+//                                       //
+//                                       //
+//             note on cmslpc            //
+//                                       //
+//                                       //
+///////////////////////////////////////////
+
+!!!!!!!!!!!!!!!!!!!!
+Host key verification failed.
+--->> remove all the correspond cluster name in ~/.ssh/known_hosts
+
+!!!!!!!!install pip:    wget https://bootstrap.pypa.io/ez_setup.py
+			~/nobackup/Python2.6/bin/python2.6 ez_setup.py install
+			download pip.version.tar.gz  
+			tar -zxvf pip.version.tar.gz
+			cd pip.version
+			~/nobackup/Python2.6/bin/python2.6 setup.py install
+
+
+///////// tar zcvf aa.tar.gz --exclude 'selection' directory ///cmslpc
+///////// tar zcvf aa.tar.gz --exclude=selection directory	/// local
+
+!!!!!!!!!!lumi calculation: install brilws
+(it seems not able to do this outside cmslpc, so need to copy the crab_dicretory to lxplus, and do the follow)
+		cmsenv
+		crab report -d /your_crab_file_directory/(if you do the crab in lxplus eos)
+		export PATH=$HOME/.local/bin:/afs/cern.ch/cms/lumi/brilconda-1.1.7/bin:$PATH  (1.0.3 not work)
+		nobackup/Python2.7/bin/pip install --install-option="--prefix=$HOME/.local" brilws (just needed for the first time to install brilws)
+		brilcalc lumi -b "STABLE BEAMS" --normtag=/afs/cern.ch/user/l/lumipro/public/normtag_file/normtag_DATACERT.json -i XJSON.txt -u /fb (where the XJSON.txt is the processLumis.json after "crab report -d crab_directory")
+
+
+///////////////////////////////////////////
+//                                       //
+//                                       //
+//             about  crab               //
+//                                       //
+//                                       //
+///////////////////////////////////////////
+
+!!!!!!!!error like below may cause by the json file:
+	Task status:			SUBMITFAILED
+	Failure message:		The CRAB3 server backend could not submit any job to the Grid scheduler: Splitting task 170107_145135:melu_crab_DMu16H-v1 on dataset /DoubleMuon/Run2016H-PromptReco-v1/MINIAOD with LumiBased method does not generate any job
+
+
+**** if some files missing, click on the dashboard link from 'crab status', then use
+'gfal-copy gsiftp://gftp.t2.ucsd.edu/hadoop/cms/phedex/store/temp/user/melu.61e6441e3485d72bcaf81b104712d1c895c271c6/DoubleMuon/DMu16H-v2/190218_202605/0000/ZtreePKU_18.root /eos/cms/store/user/melu/DoubleMuon/DMu16H-v2/190218_202605/0000/ZtreePKU_18.root'
+where '/store/temp/user/melu.61e6441e3485d72bcaf81b104712d1c895c271c6/DoubleMuon/DMu16H-v2/190218_202605/0000/ZtreePKU_18.root' is the '== JOB AD: CRAB_OutTempLFNDir' in dashboard
+
+or
+'gfal-copy gsiftp://xs-402.cr.cnaf.infn.it:2811//storage/gpfs_tsm_cms/cms/disk/store/temp/user/melu.61e6441e3485d72bcaf81b104712d1c895c271c6/DoubleEG/DEle16C-v1/190218_201652/0000/ZtreePKU_115.root .'
+reference: https://dmc.web.cern.ch/projects/gfal-2/documentation
+
+!!!!!!!!if you could not find the problems causing crab fail, you could use cmsRun to check in detail
+
+///////////////////////////////////////////
+//                                       //
+//                                       //
+//  some tips about screen/kerbero       //
+//                                       //
+//                                       //
+///////////////////////////////////////////
+
+WHAT IS CONDOR:  Condor is a software system developed by Miron Livny’s group at the University of Wisconsin and made available to the public in 2003. Condor is a specialized batch processing system that manages the jobs for a Grid Computing system. Jobs are prepared and submitted to Condor, and it takes care of finding the correct machine type and running the job.
+
+How does Condor enable programs to run on a grid:  The source code of the program is linked with the Condor library, which provides the functionality needed for running as a grid application. Condor also provides a Java Universe for Java applications and a front end for submitting a command line shell.
+
+How does Condor run jobs: Condor places your job into a queue until the required resources are available, then starts your job on an available grid machine. It also takes care of switching the job to another machine if necessary, and sharing available resources with other jobs in the queue. When the job completes, condor will send you an email notification.
+
+
+
+///////////////////////////////////////////
+//                                       //
+//                                       //
+//         some tips about root          //
+//                                       //
+//                                       //
+///////////////////////////////////////////
+
+/// boost ///
+TLorentzVector v(px,py,pz,E);
+v.Boost(-v.BoostVector())--->>> v(0,0,0,M)
+
+!!!!!!!!! RooWorkSpace w("w")
+w.factory(MyPdf::g(x,m,s))
+MyPdf::g(x,m,s) - Create p.d.f or function of type MyPdf with name g with argument x,m,s Interpretation and number of arguments are mapped to the constructor arguments of the class (after the name and title).
+
+
+
+!!!!!!!!! bitset only implement in compile mode
+
+
+!!!!!!!!!g++ compiler: fish      g++-5 -c $(root-config --cflags) xx.C
+				g++-5 -o exename $(root-config --glibs)  xx.o
+	      
+	      		csh	g++ -c `root-config --cflags` xx.C
+	      			g++ -o exename `root-config --glibs` xx.o
+
+				(use CMSSW_7* on cmslpc)
+
+
+!!!!!!!!!convert double to string :	#include <sstream>
+					std::ostringstream strs;
+					strs << double_;
+					std::string str_ = strs.str();
+
+
+!!!!!!!!!modify a exsiting tree  :
+				int main(){
+					TFile* f1=TFile::Open("outZA_signal.root","update"); // note "update" mode
+					TTree* t1=(TTree*)f1->Get("demo");  // get tree
+					t1->SetBranchStatus("*",1);	// set all branch status active
+					t1->SetBranchStatus("scalef",0);  //  set some branch in-active
+					rr(t1);
+					return 1;
+				}
+				void rr(TTree* t1){
+					        Double_t b;
+					        TBranch *bb = t1->Branch("bb",&b,"bb/D");
+					        Long64_t num = t1->GetEntries();
+					        for (Long64_t i=0; i<num; i++)
+					        {
+					                b= i;
+					                bb->Fill();
+					        }
+					        t1->Write();	// this tree will have a new "bb" branch, do not have 
+								// "scalef" branch that have been set to in-active
+				}
+
+///contour///
+{
+TCanvas *c  = new TCanvas("c","Contours",0,0,800,700);
+c->SetGrid(0.05);
+TF2 *ell = new TF2("ell","y*x+0.125*y*y-y-2.5+6*TMath::Log(6)-6*TMath::Log(y*x+2)",0.,2.,2,5.5);
+//TF2 *ell = new TF2("f2","0.1+1000*((1-(x-2)*(x-2))*(1-(y-2)*(y-2)))",1,3,1,3);
+ell->SetFillStyle(1000);
+ell->SetLineWidth(1);
+ell->SetLineColor(2);
+ell->SetFillColor(19);
+ell->SetNpx(300);
+ell->SetContour(1);
+ell->SetContourLevel(0,0);
+Int_t colors[1] = {kRed};
+gStyle->SetPalette(1,colors);
+ell->Draw("cont0");
+}
+
+log-normal uncertainty:
+https://cds.cern.ch/record/1379837/files/NOTE2011_005.pdf
+
+
+///////////////////////////////////////////
+//                                       //
+//                                       //
+//         some tips about  shell        //
+//                                       //
+//                                       //
+///////////////////////////////////////////
+
+more info: http://www.runoob.com/linux/linux-shell-passing-arguments.html
+
+#!/bin/bash
+# author:菜鸟教程
+# url:www.runoob.com
+
+echo "Shell 传递参数实例！";
+echo "执行的文件名：$0";
+echo "第一个参数为：$1";
+echo "第二个参数为：$2";
+echo "第三个参数为：$3";
+
+aa.sh:
+TAGLIST=()
+OTAGLIST+=( dyee012j_2p6p1 )
+OTAGLIST+=( dyee012j_2p6p55 )
+OTAGLIST+=( dyee012j_2p6p666 )
+echo "scale=0; ${#OTAGLIST[0]} -1 "
+echo "scale=0; ${#OTAGLIST[1]} -1 "
+echo "scale=0; ${#OTAGLIST[2]} -1 "
+echo "scale=0; ${OTAGLIST[0]} -1 "
+echo "scale=0; ${OTAGLIST[1]} -1 "
+echo "scale=0; ${OTAGLIST[2]} -1 "
+echo "scale=0; ${#OTAGLIST[@]} -1 " | bc
+
+output:
+scale=0; 14 -1
+scale=0; 15 -1
+scale=0; 16 -1
+scale=0; dyee012j_2p6p1 -1
+scale=0; dyee012j_2p6p55 -1
+scale=0; dyee012j_2p6p666 -1
+2
+
+-->> #符号计算位数，＠表示任意. bc为计算器，scale设小数位
+
+$ chmod +x test.sh
+$ ./test.sh 1 2 3
+output:
+Shell 传递参数实例！
+执行的文件名：./test.sh
+第一个参数为：1
+第二个参数为：2
+第三个参数为：3
+
+
+免密码登陆
+在farm上用ssh-keygen -t name
+在farm上cat .ssh/id_name.pub | ssh nd-2 "cat  -  >>  ~/.ssh/authorized_keys"
+
+///////////////////////////////////////////
+//                                       //
+//                                       //
+//         some tips about  c++          //
+//                                       //
+//                                       //
+///////////////////////////////////////////
+
+!!!!!!!!when compile, variables must be declared first
+						code:	bool use = ?;
+							if(use)	{int aa=2;}
+							std::cout<<aa<<std::endl;
+						this will exist compile problem like "aa was not declared",
+						so code should be changed to
+
+						modify:	bool use = ?;
+							int aa;
+							if(use)	{aa=2}
+							std::cout<<aa<<std::endl;
+
+!!!!!!!!! segment violation------>>>>> 数组越界							
+
+
+>>>Compiler build fails with fatal error: gnu/stubs-32.h: No such file or directory
+>>>
+>>>This error message shows up on the 64 bit systems where GCC/UPC multilib feature is enabled, and it indicates that 32 bit version of libc is not installed. There are two ways to correct this problem:
+>>>
+>>>Install 32 bit version of glibc (e.g. glibc-devel.i686 on Fedora, CentOS, ..)
+>>>Disable 'multilib' build by supplying "--disable-multilib" switch on the compiler configuration command
+
+匹配转义
+temp=/home/test/, var=aa
+
+>echo $temp | sed 's/\//$var/g'
+>$varhome$vartest$var
+
+>echo $temp | sed “s/\//$var/g”
+>aahomeaatestaa
+
+>echo $temp | sed 's/\//'$var'/g'
+>aahomeaatestaa
+
+sed -i 's/to_be_replaced/new_string/g' target_file
+
+************ sed *******
+aa.py中有args = cms.vstring('./DYJetsToEE_LO_MLM_mee50_slc6_amd64_gcc630_CMSSW_9_3_16_265_tarball.tar.xz'),
+ss.sh如下：
+Current_path=`pwd -P`
+echo $Current_path
+gridpack_name=hh.tar.xz
+sed -i "s|^.*tarball.tar.xz.*$|   args=cms.vstring(\'$Current_path\/$gridpack_name\'),|" aa.py
+其中如果将|换位/，则会出现sed: -e expression #1, char 47: unknown option to `s'，因为sed用来分割的/会和路径的/混淆
+
+如果需要用变量，则要用双引号:
+for i in {1..43}
+do
+let j=$i+1
+sed -i "s/Run$i/Run$j/g" config/configRun.cfg
+done
+
+***iterator
+
+#include <vector>
+#include <iostream>
+void aa()
+{
+        std::vector<double> aa;
+        std::vector<double>::const_iterator i;
+        aa.push_back(1.);
+        aa.push_back(2.);
+        aa.push_back(3.);
+        aa.push_back(4.);
+        std::cout<<"begin:"<<*aa.begin()<<endl;
+        std::cout<<"end:"<<*(aa.end()-1)<<endl;
+
+}
+
+///////////////////////////////////////////
+//                                       //
+//                                       //
+//         pileupreweight                //
+//                                       //
+//                                       //
+///////////////////////////////////////////
+
+DATA 的PU：
+pileupCalc.py -i
+Cert_271036-277933_13TeV_PromptReco_Collisions16_JSON.txt
+--inputLumiJSON
+/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/PileUp/pileup_latest.txt
+--calcMode true --minBiasXsec 69000 --maxPileupBin 50 --numPileupBins
+50 MyDataPileupHistogram.root
+
+MC PU：
+https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_setup/SMP-RunIISpring16DR80-00006
+2016_25ns_SpringMC_PUScenarioV1_PoissonOOTPU
+https://github.com/cms-sw/cmssw/blob/CMSSW_8_1_X/SimGeneral/MixingModule/python/mix_2016_25ns_SpringMC_PUScenarioV1_PoissonOOTPU_cfi.py
+
+然后用附件puweight.C可以得到puweight.root
+
+
+///////////////////////////////////////////
+//                                       //
+//                                       //
+//         higgs combine                 //
+//                                       //
+//                                       //
+///////////////////////////////////////////
+
+****change model, e.g. add extra non-standard nuisance constraint*******
+modify ModelTools.py:
+elif pdf == "constr":
+                v=self.options.verbose
+                self.options.verbose=10# force debug this line
+                self.doObj("%s_Pdf"%n, "Gaussian"," ".join(args),True)
+                self.options.verbose=v
+
+-->>example:
+in data card:
+constr4 constr const4_In[0.],RooFormulaVar::fconstr4("@0+@2-2*@1",{r_4,r_5,r_6}),delta[10.]
+then in workspace:
+RooWorkspace::factory('Gaussian::constr4_Pdf(const4_In[0.],RooFormulaVar::fconstr4("@0+@2-2*@1",{r_4,r_5,r_6}),delta[10.])')
+
+
+combine::  ../scripts/combineCards.py barrel_ZA_mu.txt endcap_ZA_mu.txt barrel_ZA_ele.txt endcap_ZA_ele.txt > total.txt
+
+calculate::  combine -v0 -M ProfileLikelihood --significance all.txt --expectSignal=1 -t -1 --toysFreq
+
+discussion on the Statistical uncertainty
+https://hypernews.cern.ch/HyperNews/CMS/get/higgs-combination/1243.html
+
+combine will not include the stat uncertainty of the nominal histogram, user need to define additional stat Up/Down histogram to include
+ the statistical uncertainty: details here, /home/lumeng/Document/CMS/combine_check
+
+ 
+***useful link to pull plots, pre/post fit********
+https://twiki.cern.ch/twiki/bin/view/CMS/HiggsWG/HiggsPAGPreapprovalChecks
+https://cms-hcomb.gitbook.io/combine/running-combine/advanced-use-cases/fitting-diagnostics/pre-post-nuisance-pars-and-pulls
+http://physics.rockefeller.edu/luc/technical_reports/cdf5776_pulls.pdf
+
+*** post fit result***
+combine -M FitDiagnostics all.txt --saveShapes --saveWithUncertainties
+***
+
+*** post-fit ****
+combine os_mll_fT0.root -M MultiDimFit -P param --floatOtherPOIs=0 --algo=grid --points=5000 --cminDefaultMinimizerStrategy=2 --saveSpecifiedNuis=all --saveSpecifiedFunc=n_exp_binch1_proc_non_prompt,n_exp_binch1_proc_QCD,n_exp_binch1_proc_sig,n_exp_binch1_proc_others,n_exp_binch2_proc_non_prompt,n_exp_binch2_proc_QCD,n_exp_binch2_proc_sig,n_exp_binch2_proc_others
+
+**--saveSpecifiedFunc　之后的量是workspace中的任意量，且之间没有空格
+*****
+
+uncertainty setting:
+lnN	1.25(which means the relative uncertainty dx is 0.25)
+is equivalent to 
+lnN	1.25/0.8(which means the up value is 1+dx_up/1, the down value is 1/(1+dx_down))
+///////////////////////////////////////////
+//                                       //
+//                                       //
+//         SMP generator                 //
+//                                       //
+//                                       //
+///////////////////////////////////////////
+find tickets contain requests:
+https://cms-pdmv.cern.ch/mcm/mccms?contains=prepid
+
+gridpack produced with cmsconnect
+nohup ./submit_cmsconnect_gridpack_generation.sh ZZTo4L2j_5f_ZZjj_cuts_NLO_FXFX cards/production/14TeV/ZZTo4L2j_5f_ZZjj_cuts_NLO_FXFX/ 2 "10 Gb" > & ZZTo4L2j.log &
+
+error:Couldn't understand job number: cms.org.cern
+-->>$ mkdir ~/.ciconnect
+-->>$ echo "cms.org.cern" > ~/.ciconnect/defaultproject
+
+if some model is missing:
+modify gridpack_generation.sh at ' wget --no-check-certificate https://cms-project-generators.web.cern.ch/cms-project-generators/$model'
+
+gridpacks path: /eos/cms/store/group/phys_generator/cvmfs/gridpacks/slc6_amd64_gcc481
+should use eoscp to move the gridpack
+
+time/event:
+divide the CPU time of your test job by the number of events in the job configuration. This must not be confused with the number of events in the output dataset, which could be much lower when there is a filter
+
+size/event:
+To compute it, you must divide the size (kB) by the number of output events (not number of events in the job configuration)
+
+In the end of the output, you get the needed statistics:
+AvgEventTime is the value to fill for time/event (in sec)
+Timing-tstoragefile-write-totalMegabytes divided by TotalEvents is the size/event (in MB, in McM you have to change to kB)
+
+Overall cross-section summary
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Process         xsec_before [pb]                passed  nposw   nnegw   tried   nposw   nnegw   xsec_match [pb]                 accepted [%]     event_eff [%]
+0               8.410e+00 +/- 5.029e-02         0       0       0       56      56      0       0.000e+00 +/- 0.000e+00         0.0 +/- 0.0     0.0 +/- 0.0
+1               6.773e+01 +/- 4.050e-01         4       4       0       375     375     0       7.225e-01 +/- 3.593e-01         1.1 +/- 0.5     1.1 +/- 0.5
+2               2.854e+02 +/- 1.707e+00         142     142     0       1644    1644    0       2.465e+01 +/- 1.983e+00         8.6 +/- 0.7     8.6 +/- 0.7
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Total           3.615e+02 +/- 1.755e+00         146     146     0       2075    2075    0       2.544e+01 +/- 2.034e+00         7.0 +/- 0.6     7.0 +/- 0.6
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Before matching: total cross section = 3.615e+02 +- 1.755e+00 pb
+After matching: total cross section = 2.544e+01 +- 2.034e+00 pb
+Filter efficiency (taking into account weights)= (146) / (146) = 1.000e+00 +- 0.000e+00
+Filter efficiency (event-level)= (146) / (146) = 1.000e+00 +- 0.000e+00
+After filter: final cross section = 2.544e+01 +- 2.034e+00 pb
+
+The matching efficiency can be retrieved from the rightmost number in the last line ("Total") of the "Overall cross-section summary" table (in this case 7.0% ---> 0.07 in McM)
+The filter efficiency can be retrieved from this line (in this case is 100%)
+Filter efficiency (event-level)= (28) / (28) = 1.000e+00 +- 0.000e+00
+
+
+///////////private request
+step1: under release, do:
+cmsDriver.py MCDBtoEDM --conditions MCRUN2_71_V1::All -s NONE --eventcontent RAWSIM --datatier GEN --filein file:/afs/cern.ch/user/m/melu/work/event.0.lhe --no_exec -n 1
+
+step2: cmsLHEtoEOSManager.py -n --compress -f the_lhe_file
+
+/////////////////////////////////////////////////////////
+//////////cross section info in powheg gridpack/////////////
+
+---->>>>>pwg-stat.dat
+////////////////////////////////
+
+
+negative weights fraction
+///////
+passed	nposw	nnegw
+https://twiki.cern.ch/twiki/bin/view/CMS/PdmVMcM
+
+
+//////////Low CPU efficiency and single core GS requests//////////
+In order to optimize cms computing resource utilization, please, set
+memory requirement of a request to 2300, when mcm complains about low
+cpu efficiency and suggests to move to single-core configuration.
+
+For normal requests with multicore setup, the default value from
+campaign should be kept.
+
+Single-core requests that were submitted with higher memory requirement
+will be reset and resubmitted by request managers.
+
+---------error-----------
+File /afs/cern.ch/cms/PPD/PdmV/work/McM/submit/validation/tests/SMP-PhaseIISummer17wmLHEGENOnly-00046/SMP-PhaseIISummer17wmLHEGENOnly-00046_run_test.sh.out does not look properly formatted or does not exist.
+...
+Job removed by SYSTEM_PERIODIC_REMOVE due to wall time exceeded allowed max.
+
+------------this means the time/event is far smaller than the true time-----------
+
+
+////////////////////////////////////////////
+//					  //
+//					  //
+//		github command		  //
+//					  //
+//					  //
+////////////////////////////////////////////
+
+****change rep to push
+git remote add new-origin git@github.com:user/reponame.git
+then:
+git push(then type your git name and ping)
+
+**** merge other rep which you forked*****
+1. Configuring a remote for a fork
+$ git remote -v
+> origin  https://github.com/YOUR_USERNAME/YOUR_FORK.git (fetch)
+> origin  https://github.com/YOUR_USERNAME/YOUR_FORK.git (push)
+$ git remote add upstream https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git
+$ git remote -v
+> origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (fetch)
+> origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (push)
+> upstream  https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git (fetch)
+> upstream  https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git (push)
+
+2. git fetch upstream
+3. git checkout master
+4. git merge upstream/master
+5. git push(to your own rep)
+
+***** edit on web, synchronize it to local repository using:
+git pull
+
+***error***
+git cms-addpkg GeneratorInterface/SherpaInterface
+Attention: git is unable to access GitHub over https, switching to ssh.
+Cloning into '/afs/cern.ch/work/m/melu/work/test/temp/CMSSW_7_1_21/src'...
+Permission denied (publickey).
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+--->>> 'ssh -T git@github.com', check public key exist under .ssh
+
+
+下载分支：git checkout branch_name 
+
+改变push路径
+git remote set-url origin https://github.com/PKUHEPEWK/VBS_ZGamma.git
+
+git remote set-url --add origin 就是往当前git项目的__config文件__里增加一行记录
+__config文件__打开方式有两种：
+
+使用命令git config -e
+在当前git项目的根目录下，文件位于 .git/config (.git目录为隐藏文件)
+你每执行一次git remote set-url --add origin 就会增加一行，如下图：
+
+git remote -v:显示当前所有远程库的详细信息，显示格式为 远程库名字 url连接(类型)
+
+git push
+fatal: unable to access 'https://menglu21@github.com/menglu21/genproductions/': error:1407742E:SSL routines:SSL23_GET_SERVER_HELLO:tlsv1 alert protocol version
+
+-->> git version issue on cmslpc, solution: cd ~/nobackup/CMSSW_8_1_0/src/, cmsenv, then could success
+
+
+查看系统支持的SSL/TLS版本：
+openssl ciphers -v | awk '{print $2}' | sort | uniq
+
+如果本地直接修改文件名后commit，那么远程仓库会有修改前后的两个文件，这时需要git rm 修改前的文件，再commit
+
+***Git Push Fails - fatal: The remote end hung up unexpectedly
+
+Increase the Git buffer size to the largest individual file size of your repo:
+
+>>>git config --global http.postBuffer 157286400
+
+//////////////////////////////////////////
+//
+//	LHE and GEN level info
+//
+//////////////////////////////////////////
+
+LHE: https://github.com/cmkuo/ggAnalysis/blob/master/ggNtuplizer/plugins/ggNtuplizer_genParticles.cc
+LHE: http://home.thep.lu.se/~leif/LHEF/classLHEF_1_1HEPEUP.html
+
+
+
+/////////////////////////////////////////////
+//					   //
+//					   //
+//		egamma smearing		   //
+//					   //
+/////////////////////////////////////////////
+
+egamma smearing doesn't change photon's eta, phi, but pT, e, chiso, phoiso, nhiso, sigma_ieie
+
+
+////////////////////////////////////////////
+//                                        //
+//                                        //
+//              madgraph                  //
+//                                        //
+////////////////////////////////////////////
+
+Syntax like:
+p p > z > e+ e- (ask one S-channel z)
+p p > e+ e- /z  (forbids any z)
+p p > e+ e- $$ z (forbids any z in s-channel)
+	1.ARE NOT GAUGE INVARIANT !
+	2.forgets diagram interference
+	3.can provides un-physical distributions
+Syntax like:
+p p > z, z > e+ e- (on-shell z decaying)
+p p > e+ e- $ z (forbids s-channel z to be on-shell)
+	1.are linked to on-shell cut |M* - M| < BW_cut*Gamma
+	2.are typically safer
+
+WARNING: fct <function compile_dir at 0x2e67b90> does not return 0. Stopping the code in a clean way. The error was:
+A compilation Error occurs when trying to compile /uscms_data/d3/mlu/MG5_aMC_v2_6_0/bin/ZA/SubProcesses/P0_dxd_emepa.
+The compilation fails with the following output message:
+    for dir in `ls -d V*`; do cd $dir; make; cd ../; done
+    make[1]: Entering directory `/uscms_data/d3/mlu/MG5_aMC_v2_6_0/bin/ZA/SubProcesses/P0_dxd_emepa/V0_dxd_emepa'
+    rm -f ../libMadLoop.a
+    gfortran -O -fno-automatic -ffixed-line-length-132 -c MadLoopCommons.f -I /uscms_data/d3/mlu/MG5_aMC_v2_6_0/HEPTools/include -I /uscms_data/d3/mlu/MG5_aMC_v2_6_0/HEPTools/include
+    MadLoopCommons.f:41.9:
+
+          USE COLLIER
+             1
+    Fatal Error: Cannot read module file 'collier.mod' opened at (1), because it was created by a different version of GNU Fortran
+
+
+--->>>>> collier is installed with different GNU Fortran, reinstall it.(install collier)
+
+*********nexternal.inc******
+e.g, for process:
+generate p p > ell+ ell- [QCD] @0
+add process p p > ell+ ell- j [QCD] @1
+add process p p > ell+ ell- j j [QCD] @2
+
+-> in P0_ddx_taptam/nexternal.inc: nincomning=2 means the remaining of incoming proton after hard scattering, i.e. 2 + (tau+, tau-) + real emissiong(due to the NLO item) 
+      INTEGER    NEXTERNAL
+      PARAMETER (NEXTERNAL=5)
+      INTEGER    NINCOMING
+      PARAMETER (NINCOMING=2)
+  
+-> in P1_gdx_epemdx/nexternal.inc: nincomning=2 means the remaining of incoming proton after hard scattering, i.e. 2 + (e+, e-) + d_bar + real emissiong(due to the NLO item)
+      INTEGER    NEXTERNAL
+      PARAMETER (NEXTERNAL=6)
+      INTEGER    NINCOMING
+      PARAMETER (NINCOMING=2)
+
+-> in P2_uc_epemuc/nexternal.inc: nincomning=2 means the remaining of incoming proton after hard scattering, i.e. 2 + (e+, e-) + u + c + real emissiong(due to the NLO item)
+      INTEGER    NEXTERNAL
+      PARAMETER (NEXTERNAL=7)
+      INTEGER    NINCOMING
+      PARAMETER (NINCOMING=2)
+
+*******
+install ninja error(MG2.6.5):
+at directory:HEPTools
+wget --no-check-certificate http://helac-phegas.web.cern.ch/helac-phegas/tar-files/OneLOop-3.6.tgz
+mv OneLOop-3.6.tgz oneloop.tar.gz
+./HEPToolInstaller.py oneloop --prefix=../ --oneloop_tarball=../oneloop.tar.gz --force
+wget --no-check-certificate https://bitbucket.org/peraro/ninja/downloads/ninja-latest.tar.gz
+mv ninja-latest.tar.gz ninja.tar.gz
+at directory:HEPToolsInstallers
+./HEPToolInstaller.py ninja --prefix=../ --ninja_tarball=../ninja.tar.gz --force
+
+/////////////////////////////////////
+//////////// pythia 
+////////////////////////////////////
+install pythia: ./mg5_aMC, MG5_aMC>install pythia8
+*********cross section after showering is in:MG5_aMC_v2_6_5/bin/DY01j_nlo/MCatNLO/RUN_PYTHIA8_1/mcatnlo_run.log
+***************************************************************************************************************
+
+use pythia8 shower LHE:
+example, /afs/cern.ch/user/m/melu/work/pythia8/my_test/mymain01.cc
+1. make mymain01
+2. ./mymain01
+
+
+////////////////////////////////////
+/////////
+/////////  read GEN information
+////////////////////////////////////
+import FWCore.ParameterSet.Config as cms
+
+process = cms.Process("Demo")
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
+
+process.source = cms.Source("PoolSource",fileNames = cms.untracked.vstring('/store/mc/RunIISummer16MiniAODv2/QCD_Pt-15to7000_TuneCUETHS1_FlatP6_13TeV_herwigpp/MINIAODSIM/NoPU_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/0EBFF299-BEBD-E611-809B-0CC47A4D7614.root'))
+
+process.load("FWCore.MessageService.MessageLogger_cfi")
+
+process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
+process.printTree = cms.EDAnalyzer("ParticleListDrawer",
+  maxEventsToPrint = cms.untracked.int32(1),
+  src = cms.InputTag("prunedGenParticles"),
+  printVertex = cms.untracked.bool(False),
+  printOnlyHardInteraction = cms.untracked.bool(False)
+)
+
+process.p = cms.Path(process.printTree)
+
+
+
+
+////////////////////////////////////////
+///  read txt file line by line
+///  
+///  string a="fT0";
+///  string mu_file="/eos/uscms/store/user/mlu/ZAjj-genjets_debug/aQGC_estimation/muon/step1/ZGmass/paramsets_"+a+"_mu.txt";
+///  ifstream infile_mu;
+///  infile_mu.open(mu_file.c_str());
+///  double aa, bb;
+///  int count=5;
+///  while (count)
+///  {
+///          infile_mu >>aa>>bb;
+///  	count--;
+///  }
+///////////////////////////////////////////
+
+/////////////////////////////////////
+///
+///   save with specifical name
+///
+///	char buffer1[256];
+///	string a="fT0";
+///	sprintf(buffer1, "ZG_%s.png",a.c_str());
+///	
+///	c01->SaveAs(buffer1);
+//////////////////////////////////////
+	
+
+//////////////////////////////////
+	jet match
+//////////////////////////////////
+https://cp3.irmp.ucl.ac.be/upload/papers/proceeding_DIS07_simon.pdf
+https://indico.cern.ch/event/333239/contributions/777451/attachments/649911/893775/ERCWorkShop.pdf
+https://indico.cern.ch/event/728259/contributions/3047280/attachments/1673171/2684960/18_06_20_tuto_ttbar.pdf
+https://indico.cern.ch/event/374678/contributions/886242/attachments/746522/1024148/fwang20150214.pdf
+https://books.google.ch/books?id=9RUfjN-DQJEC&pg=PA230&lpg=PA230&dq=differential+jet+rate&source=bl&ots=SaqnsltVPG&sig=-nDBxyKqCqC3G5j0kpB2fdvAZnk&hl=en&sa=X&ved=2ahUKEwji0OOajZDeAhUpiaYKHT-4Csk4ChDoATANegQICBAB#v=onepage&q=differential%20jet%20rate&f=false
+https://indico.cern.ch/event/141019/contributions/154343/attachments/124760/177122/SMJet_mlichtnecker_300511.pdf
+http://nuclear.ucdavis.edu/~christos/Pythia/pythia8226/include/Pythia8Plugins/JetMatching.h
+https://github.com/mortenpi/pythia8/blob/master/examples/JetMatching.h
+http://antares.in2p3.fr/users/heijboer/dox/pythia/Analysis_8cc_source.html
+http://antares.in2p3.fr/users/heijboer/dox/pythia/Analysis_8h_source.html
+
+
+go to here for more printout detail: /afs/cern.ch/user/m/melu/work/pythia8/my_test
+
+
+*******SlowJet*******
+The jet reconstructions is then based on sequential recombination with progressive removal, using the E recombination scheme. To be more specific, the algorithm works as follows.
+
+1.Each particle to be analyzed defines an original cluster. It has a well-defined four-momentum and mass at input. From this information the triplet (pT, y, phi) is calculated, i.e. the transverse momentum, rapidity and azimuthal angle of the cluster.
+
+2.Define distance measures of all clusters i to the beam
+d_iB = pT_i^2p
+and of all pairs (i,j) relative to each other
+d_ij = min( pT_i^2p, pT_j^2p) DeltaR_ij^2 / R^2
+where
+DeltaR_ij^2 = (y_i - y_j)^2 + (phi_i - phi_j)^2.
+The jet algorithm is determined by the user-selected p value, where p = -1 corresponds to the anti-kT one, p = 0 to the Cambridge/Aachen one and p = 1 to the kT one. Also R is chosen by the user, to give an approximate measure of the size of jets. However, note that jets need not have a circular shape in (y, phi) space, so R can not straight off be interpreted as a jet radius.
+
+3.Find the smallest of all d_iB and d_ij.
+
+4.If this is a d_iB then cluster i is removed from the clusters list and instead added to the jets list. Optionally, a pTjetMin requirement is imposed, where only clusters with pT > pTjetMin are added to the jets list. If so, some of the analyzed particles will not be part of any final jet.
+5.If instead the smallest measure is a d_ij then the four-momenta of the i and j clusters are added to define a single new cluster. Convert this four-momentum to a new (pT, y, phi) triplet and update the list of d_iB and d_ij.
+
+6.Return to step 3 until no clusters remain.
+
+To do jet finding analyses you first have to set up a SlowJet instance, where the arguments of the constructor specifies the details of the subsequent analyses. Thereafter you can feed in events to it, one at a time, and have them analyzed by the analyze method. Information on the resulting jets can be extracted by a few different methods. The minimal procedure only requires one call per event to do the analysis. We will begin by presenting it, and only afterwards some extensions.
+*****************************************
+*****************************************
+
+
+///////////////////////////////////
+relation between pT, pseudorapidity and Energy of massless particle
+///////////////////////////////////
+		   pseudorapidity        pT
+Energy = (1+exp(2*(2.35)))/(2*exp(2.35))*47.1124
+
+
+
+
+////////////////////////////////
+////// pythia8
+
+////////////////////////////////
+
+need t add 'dl', /usr/lib /path/to/hepmc/lib to extrapath in the shower_card
+add pythia8 path in amcatnlo_configuration.txt
+use following code to get events number after pythia:
+grep -o 'U GEV CM'  events_PYTHIA8_0.hepmc|wc -l
+
+
+///////////////////////////////
+/////// sherpa
+//////////////////////////////
+
+check sherpa version correspond to CMSSW release: 'scramv1 tool info sherpa | grep BASE | cut -f 2 -d "="'
+
+% reweight nominal QCD to QCD+EW and QCD+EW+subLO
+ASSOCIATED_CONTRIBUTIONS_VARIATIONS EW EW|LO1;
+
+
+/////////////////////////////
+//// DAS
+/////////////////////////////
+
+https://github.com/dmwm/dasgoclient, use it to find the root file with specifical run/lumi
+dasgoclient --query "file,run,lumi dataset=/DoubleEG/Run2016B-03Feb2017_ver2-v2/MINIAOD" | grep 273447 | grep 127
+
+
+
+//////////////////////////
+//// SVN
+/////////////////////////
+svn co https://svn.cern.ch/reps/<your_project>
+
+
+/////////////////////////////
+/// Latex
+////////////////////////////
+'pdfTeX warning (ext4): destination with the same identifier (name{equation.4.1}) has been already used, duplicate ignored'
+---->>> do not use '\nonumber'
+
+online:https://latexbase.com/d/f23424d4-40b9-496f-be2b-f7240f542fee
+\begin{eqnarray}
+\mathcal{L}(\boldsymbol{\mu ; \theta}) = \prod_j \textbf{Poisson}\bigg[n_j; \sum_i R_{ji}(\boldsymbol{\theta})\mu_i L\sigma_i + b_j(\boldsymbol{\theta})\bigg]\cdot \mathcal{N(\boldsymbol{\theta})}\cdot \mathcal{R(\boldsymbol{\theta})} \nonumber
+\end{eqnarray}
+
+
+////////////////////////
+/// primary vertex
+///////////////////////
+https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideEJTermbTaggingTutorial
+In order to reconstruct secondary vertices, it is important to reconstruct the primary vertex. Primary vertex reconstruction in CMS is performed by clustering tracks together and performing fits to determine the likelihood these tracks originated from a common vertex. The reconstructed vertex with the largest total pT is considered the primary vertex (Question: Is this reasonable? Why or why not? Answer: The primary vertex is the proton-proton interaction point. Many tracks should originate from this point. So, this assumption seems reasonable.).
+
+
+////////////////////////
+////   LHEF
+////////////////////////
+https://arxiv.org/pdf/hep-ph/0109068.pdf
+https://arxiv.org/pdf/hep-ph/0609017.pdf
+https://phystev.cnrs.fr/wiki/2013:groups:tools:eventformats
+
+<event>
+ 5(num of particle) 661 0.2119363E-01 0.7758777E+02(fac scale) 0.7818608E-02(alphas) 0.1203148E+00
+#
+ 1 -1 0 0 501 0 0.0000E+00 0.0000E+00 0.35806E+01 0.3580E+01 0.0E+00 0. -1.
+-2 -1 0 0 0 501 0.000E+00 0.00000E+00 -0.42030E+03 0.4203E+03 0.0E+00 0. 1.
+-24 2 1 2 0 0 0.000E+00 0.00000E+00 -0.41672E+03 0.4238E+03 0.775E+02 0. 0.
+ 11 1 3 3 0 0 0.3765E+02 0.45351E+01 -0.16391E+03 0.1682E+03 0.000E+00 0. -1.
+-12(PDG) 1(status) 3(parents) 3 0(color flow) 0 (-0.3765E+02 -0.45351E+01 -0.25283E+03 0.2556E+03)(4-vector) 0.000E+00(mass) 0. 1.(spin)
+</event>
+
+
+archlinux:
+
+********** build aur pkg **********
+makepkg PKGBUILD
+
+
+
+Could not resolve ...-> turn off resolve
+***sudo systemctl status systemd-resolved.service***
+
+Could not resolve host: repo.archlinuxcn.org: 
+1) install strace
+2) strace -f -s 512 -o strace.log wget http://www.archlinux.org/
+
+ssh: Could not resolve hostname server: Name or service not known:
+->in /etc/ssh/ssh_config, add:
+Host lxplus lxplus.cern.ch
+HostName lxplus.cern.ch
+# Specify the remote username if different from your local one
+User melu
+#Compression yes
+# Use SSHv2 only
+Protocol 2
+
+
+rm -rf提示资源忙:
+fuser
+-k: kill processes accessing the named file(杀死所有正在访问指定文件的进程)
+
+fuser -k ...
+rm -rf ...
+
+*** add printer ***
+lpadmin -p W236printer -E -v ipp://10.16.0.232/ipp/print
+
+*** shadowsocks ***
+sudo systemctl start shadowsocks@config.service
+
+EW WW cross section:
+p p > w+ w+ j j QCD=0: 0.21pb
+p p > w- w- j j QCD=0: 0.08pb
+p p > w+ w- j j QCD=0: 0.71pb
+
+inclusive
+p p > w+ w+ j j QCD=0: 0.19pb
+p p > w- w- j j QCD=0: 0.08pb
+p p > w+ w- j j : 23.1pb
+
+
+**** grep ****
+grep vanilla -r ./Template/*
+
+1.      匹配1到多个空格
+ /\s\+
+2.      替换一个或多个空格，替换为逗号，
+:%s/\s\+/,/g
+3.      替换一个或多个空格，替换为换行符
+:%s/\s\+/\r/g
+简单解释一下：
+%s ：在整个文件范围查找替换(或者使用1,$s 也是整个文件范围查找)
+/ ：分隔符
++ ： +表示重复1次或多次，加在一起表示一个或多个空格。
+\r ：换行符
+/g ：全局替换
+4.      删除文章中的空行
+:g/^s*$/d
+简单解释一下：
+g ：全区命令
+/ ：分隔符
+^s*$ ：匹配空行，其中^表示行首，s表示空字符，包括空格和制表符，*重复0到n个前面的字符，$表示行尾。连起来就是匹配只有空字符的行，也就是空行。
+/d ：删除该行
+
+
+
+######shadowsocks####
+服务端:
+1. wget https://bootstrap.pypa.io/ez_setup.py
+1.1 apt install python
+2. python ez_setup.py install
+3. clustereasy_install-2.7 pip
+4. pip install shadowsocks
+5. ssserver -c /etc/shadowsocks/config.json -d start
+6. if has error: EVP_CIPHER_CTX_cleanup->
+   in /usr/local/lib/python2.7/dist-packages/shadowsocks/crypto/openssl.py, modify cleanup to reset
+the config.json is:
+{
+    "server":"104.248.157.65",
+    "server_port":10458,
+    "local_address": "127.0.0.1",
+    "local_port":1439,
+    "password":"****",
+    "timeout":300,
+    "method":"aes-256-cfb",
+    "fast_open": false
+}
+
+****************condor************
+https://www.cl.cam.ac.uk/manuals/condor-V6_8_3-Manual/ref.html
+http://chtc.cs.wisc.edu/condor_q.shtml, e.g.,
+
+Determine why jobs are on hold -> condor_q -hold or condor_q -hold JobId 
+
+Find out why jobs are idle -> condor_q -better-analyze JobId
+
+
+***************linux 查看所有进程******************
+sudo netstat -tunlp
+
+*************madgraph: cluster mode*************
+e.g. MG5_aMC_v2_6_6/bin/ssww/Cards/me5_configuration.txt
+ run_mode = 1
+ cluster_type = condor
+ cluster_queue = None
+另需要打补丁：
+命令：patch -bp1 < xxx.patch
+
+注：把xxx.patch和要打补丁的文件放到一起到要打补丁文件 目录下执行上述命令会把补丁打进去更新现有文件，由于加入了参数-b所以还有生成一个.org后缀的文件它是打补丁前的源文件，确定打好了可以删除之。
+
+**************root chi2***********
+https://root.cern.ch/doc/master/classTH1.html#TH1:Chi2Test
+
+***********spell check*********
+In linux, you can check the spelling of your paper (written in LaTex) with the commands:
+ispell -d american paper.tex
+ispell -d british paper.tex (except that both flavor and flavour are accepted)
+
+********** bc ***********
+scale=2 设小数位，2 代表保留两位:
+
+$ echo 'scale=2; (2.777 - 1.4744)/1' | bc
+1.30
+
+************ 数组长度 ***********
+OTAGLIST+=( dyee01j_2p6p5 )
+OTAGLIST+=( dyee01j_2p6p7 )
+OTAGLIST+=( dyee01j_2p6p8 )
+${#OTAGLIST[@]}
+-->> 3
+
+
+********** seq *******
+N=2
+echo `seq 0 ${NTAG}` -->> 0 1 2
+
+
+*********** vpn *********
+在北大服务器上 ssh -D 1080 melu@lxplus.cern.ch，保持连接状态
+在本地 ssh -L 1080:localhost:1080 lum@hepfarm02.phy.pku.edu.cn，保持连接状态
+在浏览器的proxy里设置通过socks5的1080端口连接，可以访问外网
+
+************批量改名***********
+a.htm b.htm
+rename .htm _run.htm *.htm -> a_run.htm b_run.htm
+
+
+
+
+********** 预装windows系统上安装linux ****
+参考：
+https://wiki.archlinux.org/index.php/Dual_boot_with_Windows_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)#Windows_UEFI_%E5%92%8C_BIOS_%E5%90%AF%E5%8A%A8%E9%99%90%E5%88%B6
+
+1. 重新分区：在windows上磁盘管理进行压缩
+2. 进入bios(联想F2): disable secure boot
+3. 下载arch镜像
+4. 制作启动盘：查看挂载lsblk, 如下
+NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+sda      8:0    0 931.5G  0 disk 
+├─sda1   8:1    0   500M  0 part 
+├─sda2   8:2    0   150G  0 part 
+├─sda3   8:3    0    50G  0 part /
+├─sda4   8:4    0     1K  0 part 
+├─sda5   8:5    0   250G  0 part /home
+└─sda6   8:6    0   481G  0 part 
+sdb      8:16   1  28.9G  0 disk 
+└─sdb1   8:17   1  28.9G  0 part /run/media/lumeng/3D82D16A66305571
+
+烧录　sudo dd bs=4M if=./Downloads/archlinux-2020.06.01-x86_64.iso of=/dev/sdb status=progress && sync
+
+开始安装：
+检查网络模块是否加载：lspci -k
+(更简单的做法为通过有线网络安装，或者连接手机共享网络)
+查看网卡：ip link
+打开接口：ip link set wlan0 up(如果出现RTNETLINK answers: Operation not possible due to RF-kill，运行rfkill unblock wifi)
+连接网络：
+	创建wpa配置文件：nano /etc/wpa_supplicant/wifi.conf
+	在其中写入：
+	network={
+	ssid="要连接的无线の名字"
+	psk="无线の密码"
+	}
+	配置网络信息：wpa_supplicant -BDwext -i wlan0 -c /etc/wpa_supplicant/wifi.conf
+	启动网路：dhclient wlan0
+
+创建分区：gdisk /dev/××××　（两个分区，50G + 剩余）
+格式化新建分区：mkfs.ext4 /dev/××
+		mkfs.ext4 /dev/××
+
+挂在根分区：mount /dev/×× /mnt
+由于需要使用UEFI引导，所以需要创建其挂载点并挂载：
+	mkdir -p /mnt/boot/efi
+	mount /dev/×× /mnt/boot/efi
+
+创建home目录并挂载：
+	mkdir -p /mnt/home
+	mount /dev/** /mnt/home
+
+选择镜像,默认镜像速度很慢，需要切换到中国的镜像源。
+	vim /etc/pacman.d/mirrorlist
+	/tuna /ustc
+
+更新镜像 pacman -Syy
+
+安装必须的软件包: pacstrap /mnt base base-devel linux linux-firmware iw dhcpcd net-tools networkmanager
+systemctl start NetworkManager.service
+
+进入新系统:genfstab -U /mnt >> /mnt/etc/fstab
+
+vim /mnt/etc/fstab
+找到efi的那一行，把最后的2改成0，就是光标移到那，点i，删除，输入0就可以。esc，wq，回车。
+
+然后进入新系统:arch-chroot /mnt
+
+配置时区
+ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+hwclock --systohc
+
+本地化：vi /etc/locale.gen，en_US.UTF-8取消注释，执行locale-gen
+配置/etc/locale.conf
+LANG=en_US.UTF-8
+
+网络，创建 hostname 文件:
+/etc/hostname
+Lumeng
+
+/etc/hosts
+127.0.0.1	localhost
+::1		localhost
+127.0.1.1	Lumeng.localdomain Lumeng
+
+设置 Root 密码：passwd
+
+安装引导，使用grub作为引导
+pacman -S grub efibootmgr os-prober
+grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=archlinux
+grub-mkconfig -o /boot/grub/grub.cfg
+
+重启：
+exit
+umount -R /mnt
+reboot
+
+重启后将只有root用户一个账户
+useradd -m -g users -G wheel -s /bin/bash 用户名
+上边的用户名自己填，然后设置密码
+passwd 用户名
+然后
+visudo
+去掉%wheel ALL=(ALL)ALL的#，普通用户就可以使用sudo命令获取root权限了
+
+图形化：https://www.jianshu.com/p/78272ead4b89
+
+显卡驱动：pacman -S xf86-video-amdgpu
+触摸板：pacman -S xf86-input-libinput
+Xorg显示服务器，xorg是其他例如xfce和gnome, kde一些桌面环境的基础, 提供图形环境基本框架
+pacman -S xorg
+
+Gnome和优化工具gnome是基本环境, gnome-extra是一个包合集, 里面有一些软件啥的,如果是喜欢干干净净的可以不装extra, 以后缺啥装啥,gnome-tweak-tool是gnome桌面美化的很重要的工具
+pacman -S gnome gnome-extra gnome-tweak-tool
+
+窗口管理服务gdm，gnome一般用gdm, deepin用lightdm, xfce使用lxdm, kde使用sddm，我们安装gdm之后要启用它
+pacman -S gdm
+systemctl enable gdm
+
+enable guake: sudo ln -s /usr/share/applications/guake.desktop /etc/xdg/autostart/
+
+中文自体：sudo pacman -S ttf-dejavu wqy-microhei wqy-zenhei
+输入法：
+ pacman -S fcitx-im fcitx fcitx-configtool
+ pacman -S fcitx-cloudpinyin fcitx-sogoupinyin
+
+出现不能切换中文输入法问题：https://blog.csdn.net/weixin_39465823/article/details/85158605
+**在终端运行以下命令解决：
+gsettings set \
+  org.gnome.settings-daemon.plugins.xsettings overrides \
+  "{'Gtk/IMModule':<'fcitx'>}"
+
+若出现只有打开其他程序时才能F12调出tilda,重启可以解决问题
+
+
+Gnome没有顺利启动：
+1. journalctl -b -u \*gdm\*
+
+
+双系统，win10编辑linux中的文件: Linux File Systems for Windows by Paragon Software
+
+~ nvidia-smi
+NVIDIA-SMI has failed because it couldn't communicate with the NVIDIA driver. Make sure that the latest NVIDIA driver is installed and running.
+->驱动没有加载，可以通过lsmod | grep nvidia来查看，可以通过modprobe nvidia手动加载
+
+安装fish并设置为默认：
+1. sudo pacman -S fish 
+2. /home/lumeng/.local/share/omf/init.fish
+3. log out and log in
+
+安装oh-my-fish, curl -L https://get.oh-my.fish | fish
+查看可用的主题：omf theme
+安装新主题：omf install eclm
+
+在linux上挂在windows文件系统，需要安装ntfs-3g
+
+禁用Vim中鼠标点击时的虚拟选中模式(visual mode): 添加 set mouse-=a至配置文件~/.vimrc
+
+格式化u盘
+1. umount /dev/sda
+2. mkfs.vfat /dev/sda
+
+WPS没有中文输入法
+在/usr/bin/et和/usr/bin/wps中加入export XMODIFIERS="@im=fcitx" export QT_IM_MODULE="fcitx"
+
+** build Opencl in arch **
+follow https://wiki.archlinux.org/index.php/GPGPU#OpenCL
+
+1. sudo pacman -S opencl-mesa(mesa 有问题，换成yaourt -S opencl-amd解决问题)
+2. sudo pacman -S ocl-icd
+3. sudo pacman -S opencl-headers
+4. yaourt -S amdapp-sdk, during installation, there is issue while downloading AMD-APP-SDKInstaller-v3.0.130.136-GA-linux64.tar.bz2, so directly dowmload it from https://archive.org/download/AMDAPPSDK/ and put it under https://melu.web.cern.ch/melu/ (/eos/user/m/melu/www/), then modify the PKGBUILD, change the directory of AMD-APP-SDKInstaller-v3.0.130.136-GA-linux64.tar.bz2 to https://melu.web.cern.ch/melu/
+5. sudo pacman -S clinfo
+
+***sublime-text***
+install sublime: sudo pacman -S sublime-text-imfix
+install Package Control: 
+	Click the Preferences > Browse Packages… menu
+	Browse up a folder and then into the Installed Packages/ folder
+	Download Package Control.sublime-package and copy it into the Installed Packages/ directory
+	Restart Sublime Text
+
+
+**** vim ****
+打开一个Vim窗口，输入命令:color或:colorscheme后回车查看当前的颜色主题
+vim的颜色主题文件放在Vim运行目录下的color目录下，所以我们首先需要知道vim的运行目录,在vim中输入命令:echo $VIMRUNTIME 来查看Vim的运行目录。"/usr/share/vim/vim82"
+进入vim的运行目录，查看color目录下以“.vim”为结尾的文件,这些文件即是颜色主题文件，文件名就是主题名字
+在.vimrc中加入：
+syntax enable
+set background=dark
+colorscheme darkblue
